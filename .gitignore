@@ -1,0 +1,10 @@
+# package directories
+node_modules
+jspm_packages
+
+# Serverless directories
+.serverless
+
+commands.txt
+serverless-code-pipeline-cf-template.yml
+buildspec.yml
