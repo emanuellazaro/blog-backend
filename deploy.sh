@@ -8,4 +8,5 @@ npm install serverless-stack-output
 
 echo "Deploying to $env"
 echo "_______________________________"
-serverless deploy --stage $env --package $CODEBUILD_SRC_DIR/artifacts/$env -v -r us-east-1
+export SLS_DEBUG=*
+serverless deploy --stage $env -r us-east-1 --package $CODEBUILD_SRC_DIR/artifacts/$env -v 
