@@ -6,5 +6,4 @@ jspm_packages
 .serverless
 
 commands.txt
-serverless-code-pipeline-cf-template.yml
-buildspec.yml
+serverless-code-pipeline-cf-template.yaml
