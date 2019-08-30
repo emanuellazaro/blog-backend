@@ -8,7 +8,7 @@ phases:
       ## Dependencies
       - npm install
       - npm --version
-      - npm install g serverless
+      - npm install -g serverless
       - npm install --save–dev serverless-stack-output
       
   build:
@@ -16,7 +16,7 @@ phases:
       ## Integration test environment
       #- serverless deploy --stage test -v
       - mkdir artifacts
-      - mkdir artifacts/stg
+      - mkdir artifacts/dev
       - serverless package --package artifacts/dev --stage dev -v
 
   post_build:
