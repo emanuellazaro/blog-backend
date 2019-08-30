@@ -2,7 +2,8 @@
 
 echo "Installing serverless"
 echo "_______________________________"
-
+npm install -g npm
+npm --version
 npm install -g serverless
 npm install serverless-dynamodb-local serverless-offline serverless-stack-output 
 
