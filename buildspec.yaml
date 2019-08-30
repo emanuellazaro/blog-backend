@@ -17,7 +17,7 @@ phases:
       #- serverless deploy --stage test -v
       - mkdir artifacts
       - mkdir artifacts/dev
-      - serverless package --package artifacts/dev --stage dev -v
+      - serverless package --package artifacts/dev --stage dev -v -r us-east-1
 
   post_build:
     commands:
