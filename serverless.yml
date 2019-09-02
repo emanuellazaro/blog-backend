@@ -22,6 +22,7 @@ service: blog-backend
 plugins:
   - serverless-dynamodb-local
   - serverless-offline
+  - serverless-domain-manager
 
 custom:
   allowedHeaders:
@@ -33,7 +34,15 @@ custom:
     - X-Api-Key
     - X-Amz-Security-Token
     - X-Amz-User-Agent
-    
+  customDomain:
+    domainName: api.brazu.ca
+    basePath: v1
+    stage: ${self:provider.stage}
+    certificateName: '*.brazu.ca'
+    endpointType: 'edge'
+    createRoute53Record: true
+    securityPolicy: tls_1_2
+
   dynamodb:
   # If you only want to use DynamoDB Local in some stages, declare them here
     stages:

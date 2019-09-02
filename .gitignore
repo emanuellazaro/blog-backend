@@ -1,10 +1,10 @@
 # package directories
 node_modules
 jspm_packages
+package-lock.json
 
 # Serverless directories
 .serverless
-.dynamodb
 
-commands.txt
-serverless-code-pipeline-cf-template.yaml
+# DynamoDB Local files
+.dynamodb/
