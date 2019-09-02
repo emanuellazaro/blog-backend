@@ -19,6 +19,34 @@ service: blog-backend
 # Check out our docs for more details
 # frameworkVersion: "=X.X.X"
 
+plugins:
+  - serverless-dynamodb-local
+  - serverless-offline
+
+custom:
+  allowedHeaders:
+    - Accept
+    - Content-Type
+    - Content-Length
+    - Authorization
+    - X-Amz-Date
+    - X-Api-Key
+    - X-Amz-Security-Token
+    - X-Amz-User-Agent
+    
+  dynamodb:
+  # If you only want to use DynamoDB Local in some stages, declare them here
+    stages:
+      - dev
+    start:
+      port: 8000
+      inMemory: true
+      heapInitial: 200m
+      heapMax: 1g
+      migrate: true
+      seed: true
+      convertEmptyValues: true
+
 provider:
   name: aws
   runtime: nodejs10.x
@@ -29,6 +57,14 @@ provider:
   endpointType: regional
   environment: 
     POSTS_TABLE: ${self:service}-${opt:stage, self:provider.stage}
+  iamRoleStatements:
+    - Effect: Allow
+      Action: 
+        - dynamodb:Query
+        - dynamodb:PutItem
+        - dynamodb:DeleteItem
+      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.POSTS_TABLE}"
+
 
 # you can overwrite defaults here
 #  stage: dev
@@ -62,6 +98,62 @@ provider:
 #  exclude:
 #    - exclude-me.js
 #    - exclude-me-dir/**
+
+functions:
+  create-post:
+    handler: api/create.handler
+    description: POST /posts
+    events:
+      - http:
+          path: posts
+          method: post
+          cors:
+            origin: '*'
+            headers: ${self:custom.allowedHeaders}
+
+  update-post:
+    handler: api/update.handler
+    description: PATCH /posts
+    events:
+      - http:
+          path: posts
+          method: patch
+          cors:
+            origin: '*'
+            headers: ${self:custom.allowedHeaders}
+
+  list-posts:
+    handler: api/list.handler
+    description: GET /posts
+    events:
+      - http:
+          path: posts
+          method: get
+          cors:
+            origin: '*'
+            headers: ${self:custom.allowedHeaders}
+
+  get-post:
+    handler: api/get.handler
+    description: GET /posts/{slug}
+    events:
+      - http:
+          path: posts/{slug}
+          method: get
+          cors:
+            origin: '*'
+            headers: ${self:custom.allowedHeaders}
+
+  delete-post:
+    handler: api/delete.handler
+    description: DELETE /posts/{slug}
+    events:
+      - http:
+          path: posts/{slug}
+          method: delete
+          cors:
+            origin: '*'
+            headers: ${self:custom.allowedHeaders}
 
 #functions:
 #  hello:
@@ -137,3 +229,13 @@ resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
+        GlobalSecondaryIndexes:
+          - IndexName: post_slug-index
+            KeySchema:
+              - AttributeName: post_slug
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+            ProvisionedThroughput:
+              ReadCapacityUnits: 1
+              WriteCapacityUnits: 1

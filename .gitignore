@@ -4,6 +4,7 @@ jspm_packages
 
 # Serverless directories
 .serverless
+.dynamodb
 
 commands.txt
 serverless-code-pipeline-cf-template.yaml
