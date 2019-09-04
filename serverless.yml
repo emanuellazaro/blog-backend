@@ -66,13 +66,19 @@ provider:
   endpointType: regional
   environment: 
     POSTS_TABLE: ${self:service}-${opt:stage, self:provider.stage}
+    POSTS_SLUG_INDEX: post_slug-index
   iamRoleStatements:
     - Effect: Allow
       Action: 
-        - dynamodb:Query
         - dynamodb:PutItem
         - dynamodb:DeleteItem
+        - dynamodb:Scan
+        - dynamodb:UpdateItem
       Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.POSTS_TABLE}"
+    - Effect: Allow
+      Action: 
+        - dynamodb:Query
+      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.POSTS_TABLE}/index/${self:provider.environment.POSTS_SLUG_INDEX}"
 
 
 # you can overwrite defaults here
@@ -239,7 +245,7 @@ resources:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
         GlobalSecondaryIndexes:
-          - IndexName: post_slug-index
+          - IndexName: ${self:provider.environment.POSTS_SLUG_INDEX}
             KeySchema:
               - AttributeName: post_slug
                 KeyType: HASH
