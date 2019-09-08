@@ -67,6 +67,7 @@ provider:
   environment: 
     POSTS_TABLE: ${self:service}-${opt:stage, self:provider.stage}
     POSTS_SLUG_INDEX: post_slug-index
+    COGNITO_IDENTITY_POOL_ID: us-east-1:d1f11261-c7c2-40f6-bbbc-5901750c1340
   iamRoleStatements:
     - Effect: Allow
       Action: 
@@ -122,6 +123,7 @@ functions:
       - http:
           path: posts
           method: post
+          authorizer: aws_iam
           cors:
             origin: '*'
             headers: ${self:custom.allowedHeaders}
@@ -133,6 +135,7 @@ functions:
       - http:
           path: posts
           method: patch
+          authorizer: aws_iam
           cors:
             origin: '*'
             headers: ${self:custom.allowedHeaders}
@@ -166,6 +169,18 @@ functions:
       - http:
           path: posts/{slug}
           method: delete
+          authorizer: aws_iam
+          cors:
+            origin: '*'
+            headers: ${self:custom.allowedHeaders}
+
+  auth:
+    handler: api/auth.handler
+    description: Authentication for Admin to some API methods
+    events:
+      - http:
+          path: auth
+          method: get
           cors:
             origin: '*'
             headers: ${self:custom.allowedHeaders}
@@ -254,3 +269,13 @@ resources:
             ProvisionedThroughput:
               ReadCapacityUnits: 1
               WriteCapacityUnits: 1
+
+    GatewayResponseDefault4XX:
+      Type: AWS::ApiGateway::GatewayResponse
+      Properties: 
+        ResponseParameters: 
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
+        ResponseType: DEFAULT_4XX
+        RestApiId:
+          Ref: 'ApiGatewayRestApi'
