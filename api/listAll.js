@@ -14,11 +14,7 @@ exports.handler = async (event) => {
     try {
         let params = {
             TableName: tableName,
-            ProjectionExpression: 'post_slug, post_title, post_created_at',
-            FilterExpression: "published = :published",
-            ExpressionAttributeValues: {
-                 ":published": true
-            },
+            ProjectionExpression: 'post_slug, post_title, post_created_at, published',
             ScanIndexForward: false
         };
 
