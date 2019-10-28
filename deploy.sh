@@ -11,5 +11,5 @@ echo "Deploying to $env"
 echo "_______________________________"
 export SLS_DEBUG=*
 mkdir -p .serverless
-cp -r $CODEBUILD_SRC_DIR/target/$env/* $PWD/.serverless
+cp -r $CODEBUILD_SRC_DIR/artifacts/$env/* $PWD/.serverless
 serverless deploy --stage $env -r us-east-1 --package /.serverless -v 
